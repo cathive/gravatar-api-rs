@@ -1,5 +1,6 @@
 // See https://docs.gravatar.com/api/avatars/
 
+use reqwest;
 use url::Url;
 
 use crate::_common::email_hash;
@@ -42,6 +43,22 @@ impl Avatar {
             str.push_str(&format!("&f={}", force_default.to_string()));
         }
         Url::parse(&str).unwrap()
+    }
+
+    pub fn get_image_bytes(&self) -> reqwest::Result<bytes::Bytes> {
+        let url = self.image_url();
+        match reqwest::blocking::get(url) {
+            Ok(response) => response.bytes(),
+            Err(e) => Err(e),
+        }
+    }
+
+    pub async fn get_image_bytes_async(&self) -> reqwest::Result<bytes::Bytes> {
+        let url = self.image_url();
+        match reqwest::get(url).await {
+            Ok(response) => response.bytes().await,
+            Err(e) => Err(e),
+        }
     }
 }
 

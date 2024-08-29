@@ -1,6 +1,6 @@
 [package]
 name = "gravatar_api"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Benjamin P. Jung <headcr4sh@gmail.com>"]
 description = "Access to the public Gravatar API"
 edition = "2021"
@@ -8,5 +8,7 @@ license = "MIT"
 repository = "https://github.com/cathive/rust-gravatar-api"
 
 [dependencies]
-sha2 = "0.9.1"
+bytes = "1.7"
+reqwest = { version = "0.12", features = ["blocking", "json"] }
+sha2 = "0.9"
 url = "2"
