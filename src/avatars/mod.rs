@@ -62,6 +62,7 @@ impl Avatar {
     }
 }
 
+// Builder for Avatar instances.
 #[derive(Default)]
 pub struct AvatarBuilder {
     email: String,
