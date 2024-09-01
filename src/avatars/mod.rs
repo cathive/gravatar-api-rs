@@ -3,12 +3,12 @@
 use reqwest;
 use url::Url;
 
-use crate::_common::email_hash;
+use crate::common::email_hash;
 
 mod default;
 mod rating;
 
-pub use default::Default as _Default;
+pub use default::Default;
 pub use rating::Rating;
 
 const BASE_URL: &str = "https://www.gravatar.com/";
@@ -18,7 +18,7 @@ const BASE_URL: &str = "https://www.gravatar.com/";
 pub struct Avatar {
     email: String,
     pub size: Option<u16>,
-    pub default: Option<_Default>,
+    pub default: Option<Default>,
     pub force_default: Option<bool>,
     pub rating: Option<Rating>,
 }
@@ -28,6 +28,7 @@ impl Avatar {
         AvatarBuilder::new(email)
     }
 
+    /// Returns the URL of the Gravatar image.
     pub fn image_url(self: &Self) -> Url {
         let mut str = format!("{}avatar/{}", BASE_URL, email_hash(&self.email));
         if let Some(size) = self.size {
@@ -63,11 +64,11 @@ impl Avatar {
 }
 
 // Builder for Avatar instances.
-#[derive(Default)]
+#[derive(core::default::Default)]
 pub struct AvatarBuilder {
     email: String,
     size: Option<u16>,
-    default: Option<_Default>,
+    default: Option<Default>,
     force_default: Option<bool>,
     rating: Option<Rating>,
 }
@@ -76,7 +77,7 @@ impl AvatarBuilder {
     pub fn new(email: &str) -> AvatarBuilder {
         AvatarBuilder {
             email: email.to_string(),
-            ..Default::default()
+            ..core::default::Default::default()
         }
     }
 
@@ -98,7 +99,9 @@ impl AvatarBuilder {
         self
     }
 
-    pub fn default(mut self, default: _Default) -> AvatarBuilder {
+    /// Sets the default / fallback image to be used if no Gravatar image
+    /// for the given email address can be found.
+    pub fn default(mut self, default: Default) -> AvatarBuilder {
         self.default = Some(default);
         self
     }
@@ -110,6 +113,7 @@ impl AvatarBuilder {
         self
     }
 
+    /// Builds the Avatar instance.
     pub fn build(self) -> Avatar {
         Avatar {
             email: self.email,
@@ -118,5 +122,18 @@ impl AvatarBuilder {
             force_default: self.force_default,
             rating: self.rating,
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_avatar_builder() {
+        let email = "anonymous@example.com";
+
+        let builder = Avatar::builder(email);
+        assert_eq!(email, builder.build().email);
     }
 }
