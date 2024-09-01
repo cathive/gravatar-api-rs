@@ -5,3 +5,4 @@ extern crate url;
 
 pub mod avatars;
 mod common;
+pub mod profiles;
